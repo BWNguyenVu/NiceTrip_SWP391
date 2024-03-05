@@ -66,6 +66,8 @@ export default function MyProfile() {
     lastname: user?.lastname || '',
     email: user?.email || '',
     phone: user?.phone || '',
+    servicePack: user?.servicePack || '',
+
   });
   const [uploading, setUploading] = React.useState<boolean>();
   React.useEffect(() => {
@@ -76,6 +78,7 @@ export default function MyProfile() {
         lastname: user?.lastname,
         email: user?.email,
         phone: user?.phone,
+        servicePack: user?.servicePack
       })
       if (user?.profilePicture) {
         setSelectedImage(user?.profilePicture)

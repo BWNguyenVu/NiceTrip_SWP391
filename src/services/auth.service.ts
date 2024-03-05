@@ -16,7 +16,7 @@ export interface RegisterData {
     username: String;
     password: String;
     repeatPassword: String;
-    email: String
+    email: String;
 }
 
 const RegisterWithCredentials = (data: RegisterData) => {
@@ -59,8 +59,30 @@ const UpdateUser = (id: string, data: any) => {
             return err
         })
 }
+
+const CreateVNPay = (data: any) => {
+    return api.post(`/payment/create-payment-vnpay`, data)
+        .then((res)=>{
+            return res.data.data;
+        })
+        .catch((err)=>{
+            return err
+        })
+}
+
+const VNPayReturn = (userId: any, data: any) => {
+    return api.get(`/payment/${userId}/vnpay_return?${data}`, { params: data }) // Use `params` to pass data as query parameters
+        .then((res)=>{
+            return res.data; // Response data doesn't need to be accessed via `data.data`
+        })
+        .catch((err)=>{
+            throw err; // Rethrow the error to handle it in the component
+        });
+};
 export {
     RegisterWithCredentials,
     LoginWithUsernameAndPassword,
     UpdateUser,
+    CreateVNPay,
+    VNPayReturn
 }
