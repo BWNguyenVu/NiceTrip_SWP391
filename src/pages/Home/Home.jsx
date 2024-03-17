@@ -13,7 +13,7 @@ import worldImg from '../../assets/images/world.png';
 import SearchBar from '../../shared/SearchBar';
 import ServiceList from '../../components/services/ServiceList';
 import FeaturedTourList from '../../components/Featured-tours/FeaturedTourList';
-import experienceImg from '../../assets/images/experienceImg.jpg';
+import experienceImg from '../../assets/images/experienceImg.png';
 import Testimonial from '../../components/Testimonial/Testimonial';
 import {GetPost} from '../../services/post.service';
 

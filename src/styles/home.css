@@ -59,7 +59,10 @@
     margin-top: 1rem;
     font-weight: 500;
 }
-
+.experience__img img{
+    width: 500px;
+    height:500px;
+}
 .experience__content p {
     font-size: 1.1rem;
     color: var(--text-color);
