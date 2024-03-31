@@ -21,6 +21,7 @@ import { Alert } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { RegisterSuccess } from '../features/auth/auth.slice';
+import { useSnackbar } from 'notistack';
 
 function Copyright(props) {
   return (
@@ -53,9 +54,10 @@ const defaultTheme = createTheme(
 export default function SignUp() {
 
   const [open, setOpen] = React.useState(false);
-  const [success, setSuccess] = React.useState(false);
+  const [uploading, setUploading] = React.useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { enqueueSnackbar } = useSnackbar();
 
   const schema = yup.object().shape({
     firstname: yup.string()
@@ -66,12 +68,12 @@ export default function SignUp() {
       .matches(/^[a-zA-Z]+$/, 'Field cannot have numeric or special characters'),
     username: yup.string()
       .required("Username is required!")
-      .min(3, 'Username must be at least 3 characters long')
+      .min(3, 'Use 3 characters or more for your username')
       .matches(/^[a-zA-Z0-9]*$/, 'Username cannot contain special characters'),
     password: yup.string()
       .required("Password is required!")
-      .min(8, 'Password must be at least 8 characters long')
-      .matches(/[*@!#%&()^~{}]+/, 'Password must have at least one special character!')
+      .min(8, 'Use 8 characters or more for your password')
+      .matches(/[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/, 'Password must have at least one special character!')
       .matches(/[A-Z]+/, 'Password must contain at least one uppercase letter'),
     repeatPassword: yup.string()
       .required("Repeat password is required!")
@@ -88,7 +90,7 @@ export default function SignUp() {
       resolver: yupResolver(schema),
   })
   const onRegister = async (event) => {
-    setSuccess(false);
+    setUploading(true);
     // event.preventDefault();
     // const data = new FormData(event);
     const data = {
@@ -108,7 +110,8 @@ export default function SignUp() {
         navigate('/home');
       }
     } catch (error) {
-      console.error("Register failed: " + error)
+      enqueueSnackbar(`Error: ${error?.message}`, { variant: "error" });
+      setUploading(false);
     }
   };
 
@@ -130,14 +133,6 @@ export default function SignUp() {
           <Typography component="h1" variant="h5">
             Sign up
           </Typography>
-          {
-              (success === true && open) && (
-          <Alert variant="filled" severity="success" onClose={() => { setOpen(false);}}>
-            Register successfully
-          </Alert>
-              )
-          }
-
           <Box component="form" noValidate onSubmit={handleSubmit(onRegister)} sx={{ mt: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} sm={6}>
@@ -184,7 +179,7 @@ export default function SignUp() {
                     maxLength: 20, // Set the maximum number of characters
                   }}
                   error={!!errors.username}
-                  helperText={errors.username ? errors.username.message : "Must be at least 3 characters long, only allows alphanumberic characters"}
+                  helperText={errors.username ? errors.username.message : "Must contain at least 3 characters, only allows alphanumberic characters"}
                   {...register("username")}
                 />
               </Grid>
@@ -213,7 +208,7 @@ export default function SignUp() {
                   id="password"
                   autoComplete="new-password"
                   error={!!errors.password}
-                  helperText={errors.password ? errors.password.message : ["Must be at least 8 characters long, has uppercase and lowercase characters and has special characters like !@#$%..."]}
+                  helperText={errors.password ? errors.password.message : ["The password must contain at least 8 characters, has uppercase and lowercase characters and has special characters like !@#$%..."]}
                   {...register("password")}
                 />
               </Grid>

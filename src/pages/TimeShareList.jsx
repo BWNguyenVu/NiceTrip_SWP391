@@ -8,66 +8,89 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { Typography } from "@mui/joy";
 import SearchBar from "../shared/SearchBar";
+import axios from "axios";
+import Sort from "../components/Sort";
+import Pagination from "../components/Pagination";
+import { useSelector } from "react-redux";
+import Search from "../components/Search";
+import Type from "../components/Type";
+import Grid from '@mui/joy/Grid';
+import DateRangePicker from '../components/DateRangePicker';
+import { Box } from '@mui/joy';
 
 const TimeshareList = () => {
-    const [posts, setPosts] = useState([]);
-    const [filteredPosts, setFilteredPosts] = useState([]);
-    const [query, setQuery] = useState("");
-    const location = useLocation();
-    const queryString = location.search;
-    const searchParams = new URLSearchParams(queryString);
-    const filterPosts = () => {
-        const filtered = posts.filter(post => post.resortId.name.toLowerCase().includes(query.toLowerCase()));
-        setFilteredPosts(filtered);
-    }
+    const [obj, setObj] = useState({});
+    const [sort, setSort] = useState({ sort: "price", order: "desc" });
+    const user = useSelector((state) => state?.auth?.user);
+	const [page, setPage] = useState(1);
+	const [search, setSearch] = useState("");
+	const [filterType, setfilterType] = useState([]);
+    const [myPosts, setMyPosts] = useState([]); // Initialize myPosts as an empty array
+    const [loading, setLoading] = useState(true); // State to track loading state
+    const [endDate, setEndDate] = useState(""); // State for end date filter
+    const [startDate, setStartDate] = useState(""); // State for start date filter
+
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-                const data = await GetPost();
-                console.log(data);
-                setPosts(data);
-            }
-            catch (error) {
-                if (error.response) {
-                    console.log(error.response.status)
-                } else {
-                    console.error("Cannot get data from server!");
-                }
-            }
+				const url = `https://nice-trip.onrender.com/api/v2/timeshare/query?page=${page}&sort=${sort.sort},${
+					sort.order
+				}&type=${filterType}&search=${search}&start_date=${startDate}&end_date=${endDate}`;
+                console.log(url);
+
+                const { data } = await axios.get(url);
+                setObj(data);
+                setMyPosts(data.data || []); 
+                setLoading(false); 
+			} catch (err) {
+				console.log(err);
+			}
         }
         fetchData();
-    }, []);
-    useEffect(() => {
-        let queryString = searchParams.get('query');
-        if (queryString) {
-            setQuery(queryString);
-        }
-        
-        //searchParams.get('startDate');
-        //searchParams.get('endDate');
-        if (posts && posts.length > 0) {
-            filterPosts();
-        }
-    }, [posts])
-    return <>
-        <Header/>
-        <Container>
-            <Row className="d-flex align-items-center justify-content-center">
-                <SearchBar props={query}/>
-            </Row>
-            <Row className="text-center my-3">
-                {query ? <h3>Found {filteredPosts.length} posts</h3> : <h3>List of timeshares</h3>}
-            </Row>
-            <Row>
-                {filteredPosts?.map(post => (
-                    <Col lg='3' md='6' className='mb-4 position-relative'>
-                        <TourCard props={post}/>
-                    </Col>
-                ))}
-            </Row>
-        </Container>
-        <Footer/>
-    </>
+    }, [sort, filterType, page, search, , startDate, endDate]);
+    return (
+        <>
+            <Header/>
+            <Container mb={3}>
+                <Grid container spacing={2} sx={{ flexGrow: 1 }}>
+                    <Grid xs={2}>
+                        <Row className="text-center my-3">
+                            <Sort sort={sort} setSort={(sort) => setSort(sort)} />
+                            <Type 
+                                types={["rental", "exchange"]} 
+                                
+                                filterType={filterType} 
+                                setfilterType={setfilterType} 
+                            />
+                            <DateRangePicker
+                                startDate={startDate}
+                                endDate={endDate}
+                                setStartDate={setStartDate}
+                                setEndDate={setEndDate}
+                            />
+                            <Pagination
+                                page={page}
+                                limit={obj.limit ? obj.limit : 0}
+                                total={obj.total ? obj.total : 0}
+                                setPage={(page) => setPage(page)}
+                            />
+
+                        </Row>
+                    </Grid>
+                    <Grid xs={10}>
+                        <div style={{marginBottom:'50px', marginTop:'25px'}}>
+                            <Search setSearch={(search) => setSearch(search)} />
+                        </div>
+                        <Col >
+                            <TourCard myPosts={myPosts} />
+                        </Col>
+                    </Grid>
+                </Grid>
+            </Container>
+            <Footer/>
+        </>
+    );
 }
 
 export default TimeshareList;

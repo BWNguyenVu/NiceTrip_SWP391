@@ -252,12 +252,12 @@ export default function Exchange() {
                                         p: 1,
                                         display: 'flex',
                                         justifyContent: 'center',
-                                        boxShadow: '0 0 4px gray'
+                                        boxShadow: '0 0 4px gray',
                                     }} direction="column" spacing={0}
                                         justifyContent="center">
                                         <React.Fragment>
                                             <Button variant="outlined" color="neutral" onClick={handleButtonClick}>
-                                                {myPosts[selectedResortIndex]?.resortId.name || 'Select Resort'}
+                                                {myPosts[selectedResortIndex]?.resortId.name || 'Select Timeshare'}
                                             </Button>
                                             <Modal open={open} onClose={() => setOpen(false)}>
                                                 <ModalDialog
@@ -281,7 +281,7 @@ export default function Exchange() {
                                                         Select Timeshare
                                                     </Typography>
 
-                                                    <Box sx={{ overflowX: 'hidden' }}>
+                                                    <Box sx={{ overflowX: 'hidden' , width:'600px'}}>
                                                         <Grid container spacing={2} sx={{ overflowX: 'hidden' }}>
                                                             {myPosts.map((post: any, index: number) => (
                                                                 <Grid key={index} xs={12} sm={6}>
@@ -661,7 +661,7 @@ export default function Exchange() {
                                                 Cancel
                                             </Button>
                                             <Button loading={uploading} size="sm" variant="solid" type='submit'>
-                                                Save
+                                                Submit
                                             </Button>
                                         </CardActions>
                                     </CardOverflow>

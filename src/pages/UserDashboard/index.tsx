@@ -4,6 +4,7 @@ import CssBaseline from '@mui/joy/CssBaseline';
 import Box from '@mui/joy/Box';
 import Sidebar from '../../components/Profile/Sidebar';
 import Header from '../../components/Profile/Header';
+import Dashboard from '../../components/Dashboard';
 import MyProfile from '../../components/Profile/MyProfile';
 import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
 import MyOrder from '../../components/Order/MyOrder';
@@ -12,6 +13,7 @@ import MyMessage from '../../components/Messenger/MyMessages';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../features/auth/auth.slice';
 import MyTimeshares from '../../components/Timeshare/MyTimeshares';
+
 export default function JoyOrderDashboardTemplate() {
   const navigate = useNavigate();
   const isAuthenticated = useSelector((state: RootState) => state.auth.isAuthenticated);
@@ -34,7 +36,7 @@ export default function JoyOrderDashboardTemplate() {
               className="MainContent"
               sx={{
                 pt: { xs: 'calc(12px + var(--Header-height))', md: 3 },
-                pb: { xs: 2, sm: 2, md: 3 },
+                // pb: { xs: 2, sm: 2, md: 3 },
                 flex: 1,
                 display: 'flex',
                 flexDirection: 'column',
@@ -47,6 +49,7 @@ export default function JoyOrderDashboardTemplate() {
               <Routes>
                 <Route>
                   <Route path="/" element={<MyProfile />} />
+                  <Route path="/dashboard" element={<Dashboard />} />
                   <Route path="/my-profile/*" element={<MyProfile />} />
                   <Route path="/my-timeshares/*" element={<MyTimeshares />} />
                   <Route path="/my-trips/*" element={<MyTrip />} />

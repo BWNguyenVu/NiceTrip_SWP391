@@ -1,14 +1,25 @@
 import { api } from '../api';
 
-const UploadPost = (data: any) => {
+const UploadPost = async (data: any) => {
     return api.post('/timeshare/upload', data)
         .then((res) => {
             return res.data.data
         })
         .catch((error) => {
             // Handle errors here, you might want to log or show a user-friendly message
-            console.error('Error fetching resort by ID:', error);
-            throw error; // Re-throw the error to let the caller handle it if needed
+            console.error('Error uploading post:', error.response.data.message);
+            throw Error(error.response.data.message); // Re-throw the error to let the caller handle it if needed
+        })
+}
+const UpdateTimeshare = async (timeshareId: any, data: any) => {
+    return api.put(`/timeshare/${timeshareId}`, data)
+        .then((res) => {
+            return res.data.data
+        })
+        .catch((error) => {
+            // Handle errors here, you might want to log or show a user-friendly message
+            console.log(error)
+            throw Error(error.response.data.status.message); // Re-throw the error to let the caller handle it if needed
         })
 }
 const GetPost = async () => {
@@ -64,10 +75,44 @@ const GetTimeshareExchangeByCurrentOwner = (userId: string) => {
         })
 }
 
+const UploadReview = async (data: any) => {
+    return api.post('/review', data)
+        .then((res) => {
+            return res.data.data
+        })
+        .catch((error) => {
+            throw Error(error.response.data)
+        })
+}
+
+const GetReviewByResortId = async (resortId: string) => {
+    return api.get(`/review/resort/${resortId}`)
+        .then((res) => {
+            return res.data.data
+        })
+        .catch((error) => {
+            throw Error(error.response.data)
+        })
+}
+
+const CountUploadTimeshareByUser = async(userId: string) => {
+    return api.get(`/servicePack/${userId}`)
+    .then((res) => {
+        return res.data.data
+    })
+    .catch((error) => {
+        throw Error(error.response.data)
+    })
+}
+
 export {
     UploadPost,
     GetPost,
     GetPostById,
     GetPostBelongToOwner,
-    GetTimeshareExchangeByCurrentOwner
+    GetTimeshareExchangeByCurrentOwner,
+    UploadReview,
+    GetReviewByResortId,
+    CountUploadTimeshareByUser,
+    UpdateTimeshare
 }
